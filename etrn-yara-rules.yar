@@ -124,3 +124,27 @@ rule Email_SPAM_WP_URI_ShareFile_1522099609
     1 of ($uri*) and 1 of ($text*)
 }
 
+/*
+  Description: Detect spam with American Express like phishing content
+  Priority: 5
+  Scope: Against Email
+  Tags: None
+  Created by ETRN.com on 2018/03/28
+*/
+
+rule Email_Phish_Aexp_1522229129
+{
+  meta:
+		Author = "https://etrn.com/"
+
+  strings:
+    $text1 = "We are writing to let you know that there is a recent security report for your American Express(R) Account(s)" nocase
+    $text2 = "At time of report diligency, We ran into problem validating your profile." nocase
+    $text3 = "In view of this, Cardmember information needs to be updated and your mandatory effort is required." nocase
+    $text4 = "See Attached Information Form, Download and Open to Continue." nocase
+    $text5 = "Finish steps by filling out the Form." nocase
+
+  condition:
+    all of ($text*)
+}
+
