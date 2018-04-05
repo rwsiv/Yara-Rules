@@ -148,3 +148,28 @@ rule Email_Phish_Aexp_1522229129
     all of ($text*)
 }
 
+/*
+  Description: Detect phish with common patterns
+  Priority: 5
+  Scope: Against Email
+  Tags: None
+  Created by ETRN.com on 2018/04/05
+*/
+
+rule Email_Phish_CEO_1522959977
+{
+  meta:
+		Author = "https://etrn.com/"
+
+  strings:
+    $header1 = "Reply-To: "
+    $header2 = "Subject: Hello "
+    $text1 = "Are you in the office?"
+    $text2 = "Kindly let me know."
+    $text3 = "There is a request you need to handle."
+    $text4 = "Thank you"
+    $string1 = "are you in the office? kindly let me know. there is a request you need to handle. thank you"
+
+  condition:
+    (all of ($header*) and all of ($text*)) or $string1
+}
