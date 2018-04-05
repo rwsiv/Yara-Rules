@@ -168,7 +168,7 @@ rule Email_Phish_CEO_1522959977
     $text2 = "Kindly let me know."
     $text3 = "There is a request you need to handle."
     $text4 = "Thank you"
-    $string1 = "are you in the office? kindly let me know. there is a request you need to handle. thank you"
+    $string1 = " are you in the office? kindly let me know. there is a request you need to handle. thank you"
 
   condition:
     (all of ($header*) and all of ($text*)) or $string1
