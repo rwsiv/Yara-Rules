@@ -127,6 +127,35 @@ rule Email_SPAM_HTML_LongScript_var_1522080221
     // $script4 and filesize > 64KB
 }
 
+rule Email_SPAM_HTML_LongScript_entities_1523045750
+{
+  meta:
+                Author = "https://etrn.com/"
+
+  strings:
+    $script1 = "<script>" nocase
+    $script2 = "</script>" nocase
+    $script3 = /(?:&\w+;){10}.+?(?:&\w+;){10}.+?(?:&\w+;){10}/
+
+  condition:
+    all of ($script*) and filesize > 200KB
+}
+
+rule Email_SPAM_HTML_LongScript_facebook_1523046956
+{
+  meta:
+                Author = "https://etrn.com/"
+
+  strings:
+    $url1 = /http(s)?:\/\/[\w.]+\/\w+\.php\?/
+    $script1 = "<script>" nocase
+    $script2 = "</script>" nocase
+    $script3 = /.+?https:\/\/face-book\/.+?\w+/
+
+  condition:
+    any of ($url*) and all of ($script*) and filesize > 200KB
+}
+
 /*
   Description: Detect spam with WP URLs and call to download an encrypted file
   Priority: 5
