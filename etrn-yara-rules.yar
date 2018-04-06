@@ -1,5 +1,5 @@
 /*
-    This Yara ruleset is under the GNU-GPLv2 license (http://www.gnu.org/licenses/gpl-2.0.html) and open to any user or organization, as    long as you use it under this license.
+    This Yara ruleset is under the GNU-GPLv2 license (http://www.gnu.org/licenses/gpl-2.0.html) and open to any user or organization, as long as you use it under this license.
 */
 
 /*
@@ -18,15 +18,45 @@ rule Email_SPAM_IP_URL_LongStyle_1516938607
   strings:
     /*
       http://151.106.7.30//click.php?
+      http://204.12.247.218/uc.php?
+      http://31.192.240.88/click.html?
     */
     $url1 = /http(s)?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\/\w+\.php\?/
     $url2 = /http(s)?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\w+=/
+    $url3 = /http(s)?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\w+\.html\?/
+    $url4 = /http(s)?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\w+\.php\?/
 
     $style1 = "<style>"
     $style3 = /[[:punct:]]{84}\w+[[:punct:]]{84}/
 
   condition:
-    1 of ($url*) and 2 of ($style*) and filesize > 500000
+    1 of ($url*) and 2 of ($style*) and filesize > 500KB
+}
+
+/*
+  Matches a long list of broken <img tags (often inside a <style> section)
+*/
+rule Email_SPAM_IP_URL_LongStyle_1523037727
+{
+  meta:
+                Author = "https://etrn.com/"
+                reference = "https://github.com/phishme/malware_analysis/blob/master/yara_rules/cryptowall.yar"
+  strings:
+    /*
+      http://151.106.7.30//click.php?
+      http://204.12.247.218/uc.php?
+      http://31.192.240.88/click.html?
+    */
+    $url1 = /http(s)?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\/\w+\.php\?/
+    $url2 = /http(s)?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\w+=/
+    $url3 = /http(s)?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\w+\.html\?/
+    $url4 = /http(s)?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\w+\.php\?/
+
+    $style1 = "<style>"
+    $style3 = /(?:<img class=[^>]+?){10}/
+
+  condition:
+    1 of ($url*) and 2 of ($style*) and filesize > 500KB
 }
 
 rule Email_SPAM_IP_URL_LongScript_1518804881
@@ -40,13 +70,14 @@ rule Email_SPAM_IP_URL_LongScript_1518804881
     */
     $url1 = /http(s)?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\/\w+\.(html|php)\?/
     $url2 = /http(s)?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\w+=/
+    $url3 = /http(s)?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\w+\.(html|php)\?/
 
     $script1 = "<script>"
     /* $script2 = /\w{8}-\w{4}-\w{4}-\w{4}-/ */
     $script3 = /[[:punct:]]{84}\w+[[:punct:]]{84}/
 
   condition:
-    1 of ($url*) and 2 of ($script*) and filesize > 200000
+    1 of ($url*) and 2 of ($script*) and filesize > 200KB
 }
 
 rule Email_SPAM_IP_URL_LongScript_MAP_1518805374
@@ -149,27 +180,23 @@ rule Email_Phish_Aexp_1522229129
 }
 
 /*
-  Description: Detect phish with common patterns
+  Description: Detect spam with common patterns
   Priority: 5
   Scope: Against Email
   Tags: None
-  Created by ETRN.com on 2018/04/05
+  Created by ETRN.com on 2018/04/06
 */
-
-rule Email_Phish_CEO_1522959977
+/*
+rule Email_Spam_click_1523036691
 {
   meta:
 		Author = "https://etrn.com/"
 
   strings:
-    $header1 = "Reply-To: "
-    $header2 = "Subject: Hello "
-    $text1 = "Are you in the office?"
-    $text2 = "Kindly let me know."
-    $text3 = "There is a request you need to handle."
-    $text4 = "Thank you"
-    $string1 = " are you in the office? kindly let me know. there is a request you need to handle. thank you"
+    //$link1 = m'http://31.192.240.88/click.html\?'
+    $link1 = /http(s)?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/click\.html\?/
 
   condition:
-    (all of ($header*) and all of ($text*)) or $string1
+    any of ($link*)
 }
+*/
